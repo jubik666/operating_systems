@@ -16,9 +16,7 @@ int main(void) {
         ssize_t res = read_line(&r, line, sizeof(line));
 
         if (res < 0) {
-            const char msg[] = "child: ошибка чтения строки\n";
-            write(STDERR_FILENO, msg, sizeof(msg) - 1);
-            _exit(1);
+            die_errno("child: ошибка чтения строки");
         }
 
         if (res == 0) {

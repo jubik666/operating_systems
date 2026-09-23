@@ -57,3 +57,12 @@ void line_reader_init(line_reader_t *r, int fd) {
     r->len = 0;
     r->pos = 0;
 }
+
+void die_errno(const char *msg) {
+    write(STDERR_FILENO, msg, strlen(msg));
+    write(STDERR_FILENO, ": ", 2);
+    const char *err_text = strerror(errno);
+    write(STDERR_FILENO, err_text, strlen(err_text));
+    write(STDERR_FILENO, "\n", 1);
+    _exit(1);
+}

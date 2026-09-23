@@ -15,4 +15,6 @@ ssize_t read_line(line_reader_t *r, char *out, size_t out_size);
 
 void line_reader_init(line_reader_t *r, int fd);
 
+void die_errno(const char *msg);
+
 #endif
