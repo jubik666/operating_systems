@@ -5,6 +5,7 @@
 int is_prime(long n);
 long parse_long(const char *str);
 int write_long_line(int fd, long n);
+void write_error_line(int fd, long n);
 
 int main(void) {
     line_reader_t r;
@@ -24,10 +25,11 @@ int main(void) {
         }
         long number = parse_long(line);
 
-        /* Примечание: 0 и 1 не являются ни простыми, ни составными числами.
-        * По условию задачи непонятно, что с ними делать.
-        * Функция проверки чисел на простоту обрабатывает их как не простые числа,
-        * поэтому 0 и 1 будут обработаны как "составные" и выведены в вывод. */
+        if (number == 0 || number == 1) {
+            write_error_line(STDOUT_FILENO, number);
+            continue;
+        }
+
         if (number < 0 || is_prime(number)) {
             _exit(0);
         }
@@ -62,4 +64,23 @@ int write_long_line(int fd, long n) {
     }
     write(fd, buf + pos, sizeof(buf) - pos);
     return 0;
+}
+
+void write_error_line(int fd, long n) {
+    char num_buf[32];
+    int pos = sizeof(num_buf);
+    if (n == 0) {
+        num_buf[--pos] = '0';
+    } else {
+        long tmp = n;
+        while (tmp != 0) {
+            num_buf[--pos] = '0' + (tmp % 10);
+            tmp /= 10;
+        }
+    }
+    const char prefix[] = "ERROR: ";
+    const char suffix[] = " is neither prime nor composite\n";
+    write(fd, prefix, sizeof(prefix) - 1);
+    write(fd, num_buf + pos, sizeof(num_buf) - pos);
+    write(fd, suffix, sizeof(suffix) - 1);
 }
